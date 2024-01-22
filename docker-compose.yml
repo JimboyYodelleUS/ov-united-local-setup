@@ -1,0 +1,30 @@
+version: '3.1'
+services:
+  web:
+    build: .
+    platform: linux/amd64
+    user: root
+    depends_on:
+      - mydb
+    ports:
+      - "8069:8069"
+      - "8888:3001"
+    environment:
+      - HOST=mydb
+      - USER=odoo
+      - PASSWORD=myodoo
+    volumes:
+      - './entrypoint.sh:/entrypoint.sh'
+      - './config:/etc/odoo'
+      - './addons:/mnt/addons'
+      - './enterprise:/mnt/enterprise'
+      - './costoms/addons/ov-united:/mnt/extra-addons'
+    restart: always
+  mydb:
+    image: postgres:13
+    user: root
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=myodoo
+      - POSTGRES_USER=odoo
+    restart: always
